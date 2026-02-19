@@ -7,24 +7,38 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
   <header class="container">
-    <h1>Gestion de Consorcios "Luchito"</h1>
-    <p class="muted"></p>
+    <h1>Gestión de Consorcios "Luchito"</h1>
+
+    <!-- Selector de Consorcio -->
+    <div class="row" style="margin-top:10px;">
+      <label class="muted small" style="margin-right:10px;">Consorcio:</label>
+      <select id="consorcioSelect" class="input"></select>
+    </div>
   </header>
 
   <main class="container">
+
+    <!-- Tabs -->
     <nav class="tabs">
       <button class="tab active" data-tab="gastos">Gastos</button>
       <button class="tab" data-tab="pagos">Pagos</button>
       <button class="tab" data-tab="unidades">Unidades</button>
+      <button class="tab" data-tab="consorcios">Consorcios</button>
+      <button class="tab" data-tab="resumen">Resumen</button>
+
     </nav>
 
+    <!-- GASTOS -->
     <section class="panel active" id="panel-gastos">
       <div class="card">
         <div class="row">
           <h2>Gastos</h2>
           <div class="spacer"></div>
+          <button class="btn" onclick="addRow('gastos')">+ Fila</button>
           <button class="btn" onclick="saveFromGrid('gastos')">Guardar</button>
+
         </div>
         <div class="tableWrap">
           <table id="grid-gastos" class="grid"></table>
@@ -32,11 +46,13 @@
       </div>
     </section>
 
+    <!-- PAGOS -->
     <section class="panel" id="panel-pagos">
       <div class="card">
         <div class="row">
           <h2>Pagos</h2>
           <div class="spacer"></div>
+          <button class="btn" onclick="addRow('pagos')">+ Fila</button>
           <button class="btn" onclick="saveFromGrid('pagos')">Guardar</button>
         </div>
         <div class="tableWrap">
@@ -45,11 +61,13 @@
       </div>
     </section>
 
+    <!-- UNIDADES -->
     <section class="panel" id="panel-unidades">
       <div class="card">
         <div class="row">
           <h2>Unidades</h2>
           <div class="spacer"></div>
+          <button class="btn" onclick="addRow('unidades')">+ Fila</button>
           <button class="btn" onclick="saveFromGrid('unidades')">Guardar</button>
         </div>
         <div class="tableWrap">
@@ -57,6 +75,47 @@
         </div>
       </div>
     </section>
+
+    <!-- CONSORCIOS -->
+    <section class="panel" id="panel-consorcios">
+      <div class="card">
+        <div class="row">
+          <h2>Consorcios</h2>
+          <div class="spacer"></div>
+          <button class="btn" onclick="addRow('consorcios')">+ Fila</button>
+          <button class="btn" onclick="saveFromGrid('consorcios')">Guardar</button>
+        </div>
+        <div class="tableWrap">
+          <table id="grid-consorcios" class="grid"></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-resumen">
+  <div class="card">
+    <div class="row">
+      <h2>Resumen / Boleta de Expensas</h2>
+      <div class="spacer"></div>
+
+      <label class="muted small">Periodo:</label>
+      <input id="periodoInput" class="input" placeholder="2026-01" style="width:120px;" />
+
+      <button class="btn" onclick="renderResumen()">Actualizar</button>
+    </div>
+
+    <div id="resumenHeader" class="muted small" style="margin-top:10px;"></div>
+
+    <div class="tableWrap" style="margin-top:10px;">
+      <table class="grid" id="resumenTotales"></table>
+    </div>
+
+    <div class="tableWrap" style="margin-top:10px;">
+      <table class="grid" id="resumenUnidades"></table>
+    </div>
+  </div>
+</section>
+
+
   </main>
 
   <script src="app.js"></script>

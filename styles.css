@@ -46,3 +46,6 @@ body{
 }
 .grid td{background:rgba(255,255,255,.03)}
 .grid td[contenteditable="true"]{outline:none}
+.grid td:last-child { width: 90px; text-align: center; }
+.btn.ghost { background: rgba(255,255,255,.06); }
+
