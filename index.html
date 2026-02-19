@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Consorcio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="container">
+    <h1>Consorcio</h1>
+    <p class="muted">Tabs + grilla editable con Google Sheets</p>
+  </header>
+
+  <main class="container">
+    <nav class="tabs">
+      <button class="tab active" data-tab="gastos">Gastos</button>
+      <button class="tab" data-tab="pagos">Pagos</button>
+      <button class="tab" data-tab="unidades">Unidades</button>
+    </nav>
+
+    <section class="panel active" id="panel-gastos">
+      <div class="card">
+        <div class="row">
+          <h2>Gastos</h2>
+          <div class="spacer"></div>
+          <button class="btn" onclick="saveFromGrid('gastos')">Guardar</button>
+        </div>
+        <div class="tableWrap">
+          <table id="grid-gastos" class="grid"></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-pagos">
+      <div class="card">
+        <div class="row">
+          <h2>Pagos</h2>
+          <div class="spacer"></div>
+          <button class="btn" onclick="saveFromGrid('pagos')">Guardar</button>
+        </div>
+        <div class="tableWrap">
+          <table id="grid-pagos" class="grid"></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-unidades">
+      <div class="card">
+        <div class="row">
+          <h2>Unidades</h2>
+          <div class="spacer"></div>
+          <button class="btn" onclick="saveFromGrid('unidades')">Guardar</button>
+        </div>
+        <div class="tableWrap">
+          <table id="grid-unidades" class="grid"></table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

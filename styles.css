@@ -1,0 +1,48 @@
+:root{
+  --bg:#0b1220; --card:#111b2e; --text:#e9eefc; --muted:#a8b3cf;
+  --border:rgba(255,255,255,.10); --accent:#6ea8fe;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,Segoe UI,Roboto,Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+.container{max-width:1100px;margin:0 auto;padding:18px}
+.tabs{display:flex;gap:10px;margin-bottom:15px}
+.tab{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  cursor:pointer;
+}
+.tab.active{background:rgba(110,168,254,.25)}
+.panel{display:none}
+.panel.active{display:block}
+.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:15px;
+  border:1px solid var(--border);
+}
+.row{display:flex;align-items:center}
+.spacer{flex:1}
+.btn{
+  padding:8px 14px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:rgba(110,168,254,.3);
+  color:white;
+  cursor:pointer;
+}
+.tableWrap{overflow:auto;margin-top:10px}
+.grid{width:100%;border-collapse:collapse}
+.grid th,.grid td{
+  padding:8px;
+  border:1px solid var(--border);
+}
+.grid td{background:rgba(255,255,255,.03)}
+.grid td[contenteditable="true"]{outline:none}
