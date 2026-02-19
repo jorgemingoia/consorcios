@@ -134,7 +134,7 @@ function renderGrid(tabKey, headers, rows) {
       if (h.trim().toLowerCase() === "consorcio" && tabKey !== "consorcios") {
         td.textContent = row[c] ?? (selectedConsorcio || "");
       } else {
-        td.textContent = row[c] ?? "";
+        td.textContent = formatCellValue(h, row[c]);
       }
 
       tr.appendChild(td);
@@ -382,6 +382,26 @@ function parseMoney(v) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function normalizePeriodo(value) {
+  if (!value) return "";
+
+  const s = String(value);
+
+  // Si ya viene en formato 2026-01
+  if (/^\d{4}-\d{2}$/.test(s)) return s;
+
+  // Si viene como fecha ISO 2026-01-01T03:00:00.000Z
+  const d = new Date(s);
+  if (!isNaN(d)) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    return `${y}-${m}`;
+  }
+
+  return s;
+}
+
+
 function findIdx(headers, name) {
   const t = String(name).trim().toLowerCase();
   return headers.findIndex(h => String(h).trim().toLowerCase() === t);
@@ -432,8 +452,15 @@ async function renderResumen() {
   if (pImp < 0) return alert('En "Pagos" falta columna "Importe".');
 
   // filtrar por consorcio + periodo
-  const gastos = gR.filter(r => String(r[gCons]).trim() === selectedConsorcio && String(r[gPer]).trim() === periodo);
-  const pagos  = pR.filter(r => String(r[pCons]).trim() === selectedConsorcio && String(r[pPer]).trim() === periodo);
+const gastos = gR.filter(r =>
+  String(r[gCons]).trim() === selectedConsorcio &&
+  normalizePeriodo(r[gPer]) === periodo
+);
+
+const pagos  = pR.filter(r =>
+  String(r[pCons]).trim() === selectedConsorcio &&
+  normalizePeriodo(r[pPer]) === periodo
+);
   const unidades = uR.filter(r => String(r[uCons]).trim() === selectedConsorcio);
 
   const totalGastos = sumImporte(gH, gastos);
@@ -511,6 +538,17 @@ async function renderResumen() {
     ])
   );
 }
+
+
+function formatCellValue(header, value) {
+  const h = String(header || "").trim().toLowerCase();
+
+  if (h === "periodo") {
+    return normalizePeriodo(value);
+  }
+  return value ?? "";
+}
+
 
 
 async function exportResumenPDF() {
