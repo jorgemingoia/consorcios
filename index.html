@@ -90,34 +90,38 @@
         </div>
       </div>
     </section>
-
+    
+    <!-- RESUMEN -->
     <section class="panel" id="panel-resumen">
-  <div class="card">
-    <div class="row">
-      <h2>Resumen / Boleta de Expensas</h2>
-      <div class="spacer"></div>
+    <div class="card">
+      <div class="row">
+        <h2>Resumen / Boleta de Expensas</h2>
+        <div class="spacer"></div>
 
-      <label class="muted small">Periodo:</label>
-      <input id="periodoInput" class="input" placeholder="2026-01" style="width:120px;" />
+        <label class="muted small">Periodo:</label>
+        <input id="periodoInput" class="input" placeholder="2026-01" style="width:120px;" />
 
-      <button class="btn" onclick="renderResumen()">Actualizar</button>
+        <button class="btn" onclick="renderResumen()">Actualizar</button>
+        <button class="btn" onclick="exportResumenPDF()">Exportar PDF</button>
+
+      </div>
+
+      <div id="resumenHeader" class="muted small" style="margin-top:10px;"></div>
+
+      <div class="tableWrap" style="margin-top:10px;">
+        <table class="grid" id="resumenTotales"></table>
+      </div>
+
+      <div class="tableWrap" style="margin-top:10px;">
+        <table class="grid" id="resumenUnidades"></table>
+      </div>
     </div>
-
-    <div id="resumenHeader" class="muted small" style="margin-top:10px;"></div>
-
-    <div class="tableWrap" style="margin-top:10px;">
-      <table class="grid" id="resumenTotales"></table>
-    </div>
-
-    <div class="tableWrap" style="margin-top:10px;">
-      <table class="grid" id="resumenUnidades"></table>
-    </div>
-  </div>
 </section>
 
 
   </main>
-
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.31/dist/jspdf.plugin.autotable.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

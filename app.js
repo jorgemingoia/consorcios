@@ -1,6 +1,8 @@
 const API = "https://script.google.com/macros/s/AKfycbwys6CfGsgwppK1Hod-I39HPWKqZP6lPRTAH7Z9gQKMnXqBKVz4_UWdjkE5NTWQ95JK/exec";
 const SECRET = "consorcio2026";
 
+let lastResumen = null;
+
 const CONSORCIO_STORAGE_KEY = "selectedConsorcio";
 let selectedConsorcio = null;
 
@@ -395,6 +397,7 @@ async function renderResumen() {
     alert("Elegí un consorcio primero.");
     return;
   }
+
   const periodo = getPeriodoSelected();
   if (!periodo) {
     alert("Ingresá un Periodo (ej: 2026-01).");
@@ -406,15 +409,17 @@ async function renderResumen() {
   const pagosV = await apiLoadBySheetName("Pagos");
   const unidadesV = await apiLoadBySheetName("Unidades");
 
-  const gH = gastosV[0] || []; const gR = (gastosV.slice(1) || []);
-  const pH = pagosV[0] || [];  const pR = (pagosV.slice(1) || []);
-  const uH = unidadesV[0] || []; const uR = (unidadesV.slice(1) || []);
+  const gH = gastosV[0] || []; const gR = gastosV.slice(1) || [];
+  const pH = pagosV[0] || [];  const pR = pagosV.slice(1) || [];
+  const uH = unidadesV[0] || []; const uR = unidadesV.slice(1) || [];
 
   const gCons = findIdx(gH, "Consorcio");
   const gPer  = findIdx(gH, "Periodo");
 
   const pCons = findIdx(pH, "Consorcio");
   const pPer  = findIdx(pH, "Periodo");
+  const pUF   = findIdx(pH, "UF");
+  const pImp  = findIdx(pH, "Importe");
 
   const uCons = findIdx(uH, "Consorcio");
   const uUF   = findIdx(uH, "UF");
@@ -424,6 +429,7 @@ async function renderResumen() {
   if (gCons < 0 || gPer < 0) return alert('En "Gastos" faltan columnas Consorcio y/o Periodo.');
   if (pCons < 0 || pPer < 0) return alert('En "Pagos" faltan columnas Consorcio y/o Periodo.');
   if (uCons < 0 || uUF < 0 || uCoef < 0) return alert('En "Unidades" faltan columnas Consorcio, UF o Coeficiente.');
+  if (pImp < 0) return alert('En "Pagos" falta columna "Importe".');
 
   // filtrar por consorcio + periodo
   const gastos = gR.filter(r => String(r[gCons]).trim() === selectedConsorcio && String(r[gPer]).trim() === periodo);
@@ -433,21 +439,18 @@ async function renderResumen() {
   const totalGastos = sumImporte(gH, gastos);
   const totalPagos  = sumImporte(pH, pagos);
 
-  // mapa pagos por UF (si existe columna UF)
-  const pUF = findIdx(pH, "UF");
+  // pagos por UF (si existe columna UF)
   const pagosPorUF = new Map();
   if (pUF >= 0) {
-    const impIdx = findIdx(pH, "Importe");
     for (const r of pagos) {
       const uf = String(r[pUF] ?? "").trim();
-      const imp = parseMoney(r[impIdx]);
+      const imp = parseMoney(r[pImp]);
       if (!uf) continue;
       pagosPorUF.set(uf, (pagosPorUF.get(uf) || 0) + imp);
     }
   }
 
   // calcular expensa por unidad (prorrateo por coeficiente)
-  // asume coeficiente suma ~1. Si no, lo normalizamos.
   const coefs = unidades.map(r => parseMoney(r[uCoef]));
   const sumCoef = coefs.reduce((a,b)=>a+b,0) || 1;
 
@@ -461,6 +464,25 @@ async function renderResumen() {
     const saldo = expensa - pagado;
     return { uf, titular, coef, expensa, pagado, saldo };
   });
+
+  // ✅ guardar “snapshot” para PDF (DESPUÉS de tener detalle)
+  lastResumen = {
+    consorcio: selectedConsorcio,
+    periodo,
+    totales: [
+      ["Total Gastos", fmtARS(totalGastos)],
+      ["Total Pagos registrados", fmtARS(totalPagos)],
+      ["Saldo global (Gastos - Pagos)", fmtARS(totalGastos - totalPagos)],
+    ],
+    unidades: detalle.map(d => [
+      d.uf,
+      d.titular,
+      d.coef.toFixed(4),
+      fmtARS(d.expensa),
+      fmtARS(d.pagado),
+      fmtARS(d.saldo),
+    ])
+  };
 
   // Header info
   const hdr = document.getElementById("resumenHeader");
@@ -489,6 +511,70 @@ async function renderResumen() {
     ])
   );
 }
+
+
+async function exportResumenPDF() {
+  // Si no hay resumen generado, lo generamos
+  if (!lastResumen) {
+    await renderResumen();
+  }
+  if (!lastResumen) {
+    alert("No hay resumen para exportar.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+  const marginX = 40;
+  let y = 50;
+
+  doc.setFontSize(16);
+  doc.text("Boleta de Expensas", marginX, y);
+  y += 20;
+
+  doc.setFontSize(11);
+  doc.text(`Consorcio: ${lastResumen.consorcio}`, marginX, y);
+  y += 14;
+  doc.text(`Periodo: ${lastResumen.periodo}`, marginX, y);
+  y += 18;
+
+  // Tabla de totales
+  doc.autoTable({
+    startY: y,
+    head: [["Concepto", "Importe"]],
+    body: lastResumen.totales,
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [230, 230, 230], textColor: 20 },
+    margin: { left: marginX, right: marginX },
+  });
+
+  y = doc.lastAutoTable.finalY + 20;
+
+  // Tabla por unidad
+  doc.setFontSize(12);
+  doc.text("Detalle por Unidad Funcional", marginX, y);
+  y += 10;
+
+  doc.autoTable({
+    startY: y,
+    head: [["UF", "Titular", "Coef.", "Expensa", "Pagado", "Saldo"]],
+    body: lastResumen.unidades,
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [230, 230, 230], textColor: 20 },
+    margin: { left: marginX, right: marginX },
+    columnStyles: {
+      2: { halign: "right" },
+      3: { halign: "right" },
+      4: { halign: "right" },
+      5: { halign: "right" },
+    },
+  });
+
+  const filename = `expensas_${lastResumen.consorcio}_${lastResumen.periodo}.pdf`;
+  doc.save(filename);
+}
+
 
 function renderSimpleTable(tableId, headers, rows) {
   const table = document.getElementById(tableId);
