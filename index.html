@@ -15,6 +15,8 @@
     <div class="row" style="margin-top:10px;">
       <label class="muted small" style="margin-right:10px;">Consorcio:</label>
       <select id="consorcioSelect" class="input"></select>
+        <label class="muted small" style="margin-left:10px;">Periodo:</label>
+  <input id="periodoSelect" class="input" type="month" />
     </div>
   </header>
 
@@ -98,8 +100,7 @@
         <h2>Resumen / Boleta de Expensas</h2>
         <div class="spacer"></div>
 
-        <label class="muted small">Periodo:</label>
-        <input id="periodoInput" class="input" placeholder="2026-01" style="width:120px;" />
+
 
         <button class="btn" onclick="renderResumen()">Actualizar</button>
         <button class="btn" onclick="exportResumenPDF()">Exportar PDF</button>

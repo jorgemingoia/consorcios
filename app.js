@@ -1,6 +1,11 @@
 const API = "https://script.google.com/macros/s/AKfycbxphRlQ3sIv_0qIN-5NudsW2zd0GBN6h1_Pc0Rk0DYavDcY29TYPdbAdhhUO6Ve-Rra/exec";
 const SECRET = "consorcio2026";
 
+
+const PERIODO_STORAGE_KEY = "selectedPeriodo";
+let selectedPeriodo = null;
+
+
 let lastResumen = null;
 
 const CONSORCIO_STORAGE_KEY = "selectedConsorcio";
@@ -12,6 +17,25 @@ const TAB_TO_SHEET = {
   pagos: "Pagos",
   unidades: "Unidades",
 };
+
+
+
+function initPeriodoSelector() {
+  const el = document.getElementById("periodoSelect");
+  if (!el) return;
+
+  const saved = localStorage.getItem(PERIODO_STORAGE_KEY);
+  if (saved) el.value = saved;
+
+  selectedPeriodo = el.value || saved || "";
+
+  el.addEventListener("change", async () => {
+    selectedPeriodo = el.value || "";
+    localStorage.setItem(PERIODO_STORAGE_KEY, selectedPeriodo);
+    await refreshAllDataTabs();
+  });
+}
+
 
 // ---------- Tabs ----------
 document.querySelectorAll(".tab").forEach((btn) => {
@@ -37,6 +61,8 @@ document.querySelectorAll(".tab").forEach((btn) => {
     await loadAndRenderFiltered(tabKey);
   });
 });
+
+
 
 // ---------- API helpers ----------
 async function apiLoadBySheetName(sheetName) {
@@ -87,12 +113,16 @@ async function loadAndRenderFiltered(tabKey) {
   const headers = values[0] || [];
   let rows = values.slice(1) || [];
 
-  // filtrar por consorcio seleccionado (si existe columna)
-  if (selectedConsorcio) {
-    const consIdx = findCol(headers, "consorcio");
-    if (consIdx >= 0) {
-      rows = rows.filter((r) => norm(r[consIdx]) === norm(selectedConsorcio));
-    }
+  const consIdx = findCol(headers, "consorcio");
+  const perIdx  = findCol(headers, "periodo");
+
+  if (selectedConsorcio && consIdx >= 0) {
+    rows = rows.filter(r => norm(r[consIdx]) === norm(selectedConsorcio));
+  }
+
+  // Solo filtra por periodo si existe columna "Periodo" y hay periodo seleccionado
+  if (selectedPeriodo && perIdx >= 0) {
+    rows = rows.filter(r => normalizePeriodo(r[perIdx]) === selectedPeriodo);
   }
 
   renderGrid(tabKey, headers, rows);
@@ -323,6 +353,11 @@ async function refreshAllDataTabs() {
   await loadAndRenderFiltered("gastos");
   await loadAndRenderFiltered("pagos");
   await loadAndRenderFiltered("unidades");
+  // si el tab activo es resumen, refrescarlo
+  const activeTab = document.querySelector(".tab.active")?.dataset?.tab;
+  if (activeTab === "resumen") {
+    await renderResumen();
+  }
 }
 
 // ---------- Utils ----------
@@ -347,23 +382,10 @@ function escapeHtml(s) {
 (async function start() {
   // Si tenés tab "Consorcios", lo podés cargar también cuando se haga click.
   await initConsorcioSelector();
-
+  initPeriodoSelector();   
   // Carga inicial: gastos filtrado
   await loadAndRenderFiltered("gastos");
 })();
-
-function getPeriodoSelected() {
-  const el = document.getElementById("periodoInput");
-  const savedKey = "selectedPeriodo";
-  const saved = localStorage.getItem(savedKey);
-
-  if (el && el.value && el.value.trim()) {
-    localStorage.setItem(savedKey, el.value.trim());
-    return el.value.trim();
-  }
-  if (el && saved) el.value = saved;
-  return saved || "";
-}
 
 function sumImporte(headers, rows) {
   const idx = headers.findIndex(h => String(h).trim().toLowerCase() === "importe");
@@ -418,11 +440,12 @@ async function renderResumen() {
     return;
   }
 
-  const periodo = getPeriodoSelected();
+  const periodo = selectedPeriodo || "";
   if (!periodo) {
-    alert("Ingresá un Periodo (ej: 2026-01).");
+    alert("Elegí un Periodo arriba (YYYY-MM).");
     return;
   }
+
 
   // cargar hojas completas
   const gastosV = await apiLoadBySheetName("Gastos");
