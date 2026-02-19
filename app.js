@@ -1,4 +1,4 @@
-const API = "https://script.google.com/macros/s/AKfycbwys6CfGsgwppK1Hod-I39HPWKqZP6lPRTAH7Z9gQKMnXqBKVz4_UWdjkE5NTWQ95JK/exec";
+const API = "https://script.google.com/macros/s/AKfycbxphRlQ3sIv_0qIN-5NudsW2zd0GBN6h1_Pc0Rk0DYavDcY29TYPdbAdhhUO6Ve-Rra/exec";
 const SECRET = "consorcio2026";
 
 let lastResumen = null;
@@ -642,4 +642,77 @@ function renderSimpleTable(tableId, headers, rows) {
 
   table.appendChild(thead);
   table.appendChild(tbody);
+}
+
+async function sendResumenEmails() {
+  // Asegurarnos de tener resumen calculado
+  if (!lastResumen) await renderResumen();
+  if (!lastResumen) {
+    alert("No hay resumen para enviar.");
+    return;
+  }
+
+  // Generar PDF en memoria (sin descargar)
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+  const marginX = 40;
+  let y = 50;
+
+  doc.setFontSize(16);
+  doc.text("Boleta de Expensas", marginX, y);
+  y += 20;
+
+  doc.setFontSize(11);
+  doc.text(`Consorcio: ${lastResumen.consorcio}`, marginX, y);
+  y += 14;
+  doc.text(`Periodo: ${lastResumen.periodo}`, marginX, y);
+  y += 18;
+
+  doc.autoTable({
+    startY: y,
+    head: [["Concepto", "Importe"]],
+    body: lastResumen.totales,
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [230, 230, 230], textColor: 20 },
+    margin: { left: marginX, right: marginX },
+  });
+
+  y = doc.lastAutoTable.finalY + 20;
+
+  doc.setFontSize(12);
+  doc.text("Detalle por Unidad Funcional", marginX, y);
+  y += 10;
+
+  doc.autoTable({
+    startY: y,
+    head: [["UF", "Titular", "Coef.", "Expensa", "Pagado", "Saldo"]],
+    body: lastResumen.unidades,
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [230, 230, 230], textColor: 20 },
+    margin: { left: marginX, right: marginX },
+  });
+
+  // PDF -> base64
+  const dataUri = doc.output("datauristring"); // "data:application/pdf;...base64,XXXX"
+  const base64 = dataUri.split(",")[1];
+
+  // Enviar al Apps Script (sin CORS preflight: form-urlencoded)
+  const body = new URLSearchParams();
+  body.set("secret", SECRET);
+  body.set("action", "sendEmails");
+  body.set("consorcio", lastResumen.consorcio);
+  body.set("periodo", lastResumen.periodo);
+  body.set("filename", `expensas_${lastResumen.consorcio}_${lastResumen.periodo}.pdf`);
+  body.set("pdfBase64", base64);
+
+  const res = await fetch(API, { method: "POST", body });
+  const data = await res.json();
+
+  if (!data.ok) {
+    alert(`Error enviando: ${data.error || "unknown"}`);
+    return;
+  }
+
+  alert(`Listo ✅ Enviados: ${data.sent} | Fallidos: ${data.failed}`);
 }
