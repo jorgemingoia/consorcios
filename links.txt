@@ -1,0 +1,5 @@
+API keys
+https://aistudio.google.com/api-keys?project=gen-lang-client-0932981892
+
+appscripts
+https://script.google.com/u/0/home/projects/1WarPJ-mqbv239PF9LDzlq0WpafEUS6ZLVDdk8gqDd0cEvQSjYeFvdNiO/edit

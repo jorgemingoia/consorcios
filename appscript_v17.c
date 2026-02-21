@@ -139,7 +139,10 @@ function testFetch() {
 
 function handleAIConsulta(p) {
   try {
-    const apiKey = "AIzaSyAiPGxlZx8-2OyYqPwE16a6d3lHxvVXBqg";
+    const apiKey = PropertiesService
+      .getScriptProperties()
+      .getProperty("GEMINI_API_KEY");
+
     if (!apiKey) return json({ ok: false, error: "Falta GEMINI_API_KEY en Script Properties." });
 
     const pregunta = (p.pregunta || "").trim();
@@ -278,7 +281,9 @@ function getSensitiveColumnIndexes_(headers) {
 }
 
 function listGeminiModels() {
-  const apiKey = "AIzaSyAiPGxlZx8-2OyYqPwE16a6d3lHxvVXBqg";
+  const apiKey = PropertiesService
+    .getScriptProperties()
+    .getProperty("GEMINI_API_KEY");
   const url = "https://generativelanguage.googleapis.com/v1beta/models";
 
   const r = UrlFetchApp.fetch(url, {
@@ -290,3 +295,11 @@ function listGeminiModels() {
   Logger.log("STATUS: " + r.getResponseCode());
   Logger.log(r.getContentText());
 }
+
+
+function testProperty() {
+  const k = PropertiesService.getScriptProperties()
+    .getProperty("GEMINI_API_KEY");
+  Logger.log(k ? "OK guardada" : "No encontrada");
+}
+
