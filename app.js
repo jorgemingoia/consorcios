@@ -1,4 +1,4 @@
-const API = "https://script.google.com/macros/s/AKfycbyzsK4M11fQl9uZGAfUURwnrdwfdEn8XE8_b3XHv1Rpshbw9yku1TwcOIsANyhW9tRs/exec";
+const API = "https://script.google.com/macros/s/AKfycbxqzqP-0IUkuQxxSzMFpxEQ32IvWXGU4V_tVbiKRrSKh8SSFCZ-eWR9GFfzIw1tDYZs/exec";
 
 const SECRET = "consorcio2026";
 
