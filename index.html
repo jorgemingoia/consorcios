@@ -117,6 +117,19 @@
       <div class="tableWrap" style="margin-top:10px;">
         <table class="grid" id="resumenUnidades"></table>
       </div>
+
+      <div style="margin-top:30px; border-top: 1px solid var(--border); padding-top: 20px;">
+          <h3>🤖 Asistente de Consultas</h3>
+          <p class="muted small">Pregunta sobre gastos, deudores o comparativas de este periodo.</p>
+          <div class="row" style="gap:10px;">
+            <input type="text" id="aiPregunta" class="input" style="flex:1" placeholder="Ej: ¿Cuál fue el gasto más alto?">
+            <button class="btn" onclick="preguntarIA()" id="btnIA">Preguntar</button>
+          </div>
+          <div id="aiRespuesta" class="card" style="margin-top:15px; display:none; background: rgba(110,168,254,0.05); font-size: 0.95em; line-height: 1.5;">
+          </div>
+      </div>
+
+
     </div>
 </section>
 

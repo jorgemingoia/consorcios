@@ -1,4 +1,5 @@
-const API = "https://script.google.com/macros/s/AKfycbxphRlQ3sIv_0qIN-5NudsW2zd0GBN6h1_Pc0Rk0DYavDcY29TYPdbAdhhUO6Ve-Rra/exec";
+const API = "https://script.google.com/macros/s/AKfycbyzsK4M11fQl9uZGAfUURwnrdwfdEn8XE8_b3XHv1Rpshbw9yku1TwcOIsANyhW9tRs/exec";
+
 const SECRET = "consorcio2026";
 
 
@@ -738,4 +739,51 @@ async function sendResumenEmails() {
   }
 
   alert(`Listo ✅ Enviados: ${data.sent} | Fallidos: ${data.failed}`);
+}
+
+async function preguntarIA() {
+  const input = document.getElementById("aiPregunta");
+  const btn = document.getElementById("btnIA");
+  const respuestaDiv = document.getElementById("aiRespuesta");
+  
+  const pregunta = input.value.trim();
+  if (!pregunta) return;
+
+  // 1. Feedback visual para el usuario
+  btn.disabled = true;
+  btn.textContent = "Pensando...";
+  respuestaDiv.style.display = "block";
+  respuestaDiv.innerHTML = "<em>Analizando datos del consorcio...</em>";
+
+  // 2. Preparamos los datos para enviar
+  const body = new URLSearchParams();
+  body.set("secret", SECRET);
+  body.set("action", "askIA");
+  body.set("pregunta", pregunta);
+  body.set("consorcio", selectedConsorcio);
+  
+  // Enviamos el resumen actual (lastResumen) como contexto
+  // Esto hace que la IA sepa de qué estamos hablando sin leer todo el Excel de nuevo
+  if (lastResumen) {
+    body.set("contexto", JSON.stringify(lastResumen));
+  }
+
+  try {
+    const res = await fetch(API, { method: "POST", body });
+    const data = await res.json();
+    
+    if (data.ok) {
+      // Reemplazamos los saltos de línea de la IA por <br> para que se vea bien en HTML
+      respuestaDiv.innerHTML = `<strong>Asistente:</strong><br>${data.respuesta.replace(/\n/g, '<br>')}`;
+    } else {
+      respuestaDiv.innerHTML = `<span style="color: #ff6e6e;">Error: ${data.error}</span>`;
+    }
+  } catch (err) {
+    respuestaDiv.innerHTML = "Error de conexión con el script de Google.";
+    console.error(err);
+  } finally {
+    // 3. Restaurar el botón
+    btn.disabled = false;
+    btn.textContent = "Preguntar";
+  }
 }
