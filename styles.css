@@ -1,51 +1,321 @@
+/* =========================
+   Consorcio UI – improved CSS
+   Drop-in replacement for existing styles.css
+   ========================= */
+
 :root{
-  --bg:#0b1220; --card:#111b2e; --text:#e9eefc; --muted:#a8b3cf;
-  --border:rgba(255,255,255,.10); --accent:#6ea8fe;
+  /* Base palette (keeps your dark theme) */
+  --bg:#0b1220;
+  --card:#0f1a2d;
+  --card2:#0c1628;
+  --text:#e9eefc;
+  --muted:#a8b3cf;
+
+  --border:rgba(255,255,255,.10);
+  --border2:rgba(255,255,255,.14);
+
+  --accent:#6ea8fe;
+  --accent2:#8bbcff;
+
+  --danger:#ff6e6e;
+  --success:#2dd4bf;
+  --warning:#fbbf24;
+
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --shadowSoft: 0 6px 18px rgba(0,0,0,.25);
+
+  --radius:16px;
+  --radiusSm:12px;
+
+  --focus: 0 0 0 3px rgba(110,168,254,.25);
 }
+
+/* Reset-ish */
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
-  font-family:system-ui,Segoe UI,Roboto,Arial;
-  background:var(--bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(110,168,254,.10), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(45,212,191,.08), transparent 60%),
+    var(--bg);
   color:var(--text);
+  line-height:1.45;
 }
-.container{max-width:1100px;margin:0 auto;padding:18px}
-.tabs{display:flex;gap:10px;margin-bottom:15px}
+
+/* Layout */
+.container{
+  max-width:1180px;
+  margin:0 auto;
+  padding:22px 18px;
+}
+
+header.container{
+  padding-bottom:10px;
+}
+
+main.container{
+  padding-top:14px;
+}
+
+/* Typography */
+h1{
+  margin:0;
+  font-size: clamp(20px, 2.4vw, 28px);
+  letter-spacing:.2px;
+}
+h2{
+  margin:0;
+  font-size: 18px;
+  letter-spacing:.2px;
+}
+h3{
+  margin:0 0 6px 0;
+  font-size: 16px;
+  letter-spacing:.2px;
+}
+
+.muted{ color: var(--muted); }
+.small{ font-size: 12.5px; }
+
+/* Row helpers */
+.row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.spacer{flex:1}
+
+/* Inputs */
+.input{
+  appearance:none;
+  -webkit-appearance:none;
+  outline:none;
+
+  padding:10px 12px;
+  min-height:40px;
+
+  color:var(--text);
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border:1px solid var(--border2);
+  border-radius: 12px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.input::placeholder{ color: rgba(168,179,207,.75); }
+
+.input:focus{
+  border-color: rgba(110,168,254,.55);
+  box-shadow: var(--focus), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+select.input{
+  padding-right:34px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(233,238,252,.85) 50%),
+    linear-gradient(135deg, rgba(233,238,252,.85) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%,
+    100% 0;
+  background-size:6px 6px, 6px 6px, 2.5em 2.5em;
+  background-repeat:no-repeat;
+}
+
+label{ user-select:none; }
+
+/* Tabs */
+.tabs{
+  display:flex;
+  gap:10px;
+  margin: 14px 0 14px 0;
+  padding: 6px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  border-radius: 14px;
+  box-shadow: var(--shadowSoft);
+  overflow:auto;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
+
 .tab{
   padding:10px 14px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.05);
-  color:var(--text);
+  border-radius:12px;
+  border:1px solid transparent;
+  background: transparent;
+  color: rgba(233,238,252,.90);
   cursor:pointer;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease, color .15s ease;
+  white-space:nowrap;
 }
-.tab.active{background:rgba(110,168,254,.25)}
+.tab:hover{
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.08);
+}
+.tab:active{ transform: translateY(1px); }
+
+.tab.active{
+  background: linear-gradient(180deg, rgba(110,168,254,.28), rgba(110,168,254,.18));
+  border-color: rgba(110,168,254,.40);
+  color: var(--text);
+  box-shadow: 0 8px 18px rgba(110,168,254,.12);
+}
+
+/* Panels */
 .panel{display:none}
 .panel.active{display:block}
-.card{
-  background:var(--card);
-  padding:15px;
-  border-radius:15px;
-  border:1px solid var(--border);
-}
-.row{display:flex;align-items:center}
-.spacer{flex:1}
-.btn{
-  padding:8px 14px;
-  border-radius:8px;
-  border:1px solid var(--border);
-  background:rgba(110,168,254,.3);
-  color:white;
-  cursor:pointer;
-}
-.tableWrap{overflow:auto;margin-top:10px}
-.grid{width:100%;border-collapse:collapse}
-.grid th,.grid td{
-  padding:8px;
-  border:1px solid var(--border);
-}
-.grid td{background:rgba(255,255,255,.03)}
-.grid td[contenteditable="true"]{outline:none}
-.grid td:last-child { width: 90px; text-align: center; }
-.btn.ghost { background: rgba(255,255,255,.06); }
 
+/* Card */
+.card{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)),
+    var(--card);
+  padding:16px;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* Buttons */
+.btn{
+  padding:9px 14px;
+  min-height:38px;
+  border-radius: 12px;
+  border:1px solid rgba(110,168,254,.35);
+  background: linear-gradient(180deg, rgba(110,168,254,.38), rgba(110,168,254,.22));
+  color: var(--text);
+  cursor:pointer;
+  transition: transform .08s ease, filter .15s ease, border-color .15s ease, background .15s ease;
+  user-select:none;
+}
+.btn:hover{
+  filter: brightness(1.05);
+  border-color: rgba(110,168,254,.55);
+}
+.btn:active{ transform: translateY(1px); }
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+/* Sub-variant you already use */
+.btn.ghost{
+  border-color: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+}
+.btn.ghost:hover{
+  background: rgba(255,255,255,.08);
+}
+
+/* Table wrapper + scrollbars */
+.tableWrap{
+  overflow:auto;
+  margin-top:12px;
+  border-radius: 14px;
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.12);
+}
+
+/* nicer scrollbars (webkit) */
+.tableWrap::-webkit-scrollbar{ height:10px; width:10px; }
+.tableWrap::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.10);
+  border-radius: 999px;
+}
+.tableWrap::-webkit-scrollbar-thumb:hover{
+  background: rgba(255,255,255,.16);
+}
+
+/* Grid / table */
+.grid{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width: 900px; /* helps usability on wide tables */
+}
+
+/* Sticky header */
+.grid thead th{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)),
+    var(--card2);
+  backdrop-filter: blur(6px);
+}
+
+.grid th,
+.grid td{
+  padding:10px 10px;
+  border-bottom:1px solid var(--border);
+  border-right:1px solid var(--border);
+  vertical-align: middle;
+  font-size: 13.5px;
+}
+.grid th:first-child,
+.grid td:first-child{ border-left: 0; }
+.grid th{ text-align:left; color: rgba(233,238,252,.92); font-weight: 600; }
+.grid tr:last-child td{ border-bottom:0; }
+
+.grid tbody tr:nth-child(odd) td{
+  background: rgba(255,255,255,.02);
+}
+.grid tbody tr:hover td{
+  background: rgba(110,168,254,.06);
+}
+
+/* Editable cells */
+.grid td[contenteditable="true"]{
+  outline:none;
+  transition: box-shadow .12s ease, background .12s ease, border-color .12s ease;
+}
+.grid td[contenteditable="true"]:focus{
+  background: rgba(110,168,254,.10);
+  box-shadow: inset 0 0 0 2px rgba(110,168,254,.35), var(--focus);
+  border-right-color: rgba(110,168,254,.25);
+}
+
+/* Actions column */
+.grid td:last-child,
+.grid th:last-child{
+  width: 96px;
+  text-align:center;
+  border-right: 0;
+}
+
+/* Make the delete icon button look consistent */
+.grid td:last-child .btn{
+  padding:8px 10px;
+  min-height:34px;
+  border-radius: 10px;
+}
+
+/* Focus visibility */
+:focus-visible{
+  outline: none;
+  box-shadow: var(--focus);
+  border-radius: 10px;
+}
+
+/* Info blocks (your AI answer uses .card) */
+#aiRespuesta.card{
+  border-color: rgba(110,168,254,.25);
+  box-shadow: 0 10px 24px rgba(110,168,254,.08);
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px){
+  .container{ padding:18px 14px; }
+  .card{ padding:14px; border-radius: 14px; }
+  .tabs{ border-radius: 14px; }
+  .tab{ padding:9px 12px; }
+  .btn{ padding:9px 12px; }
+  .grid{ min-width: 780px; }
+}
