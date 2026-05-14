@@ -9,7 +9,7 @@
 <body>
 
   <header class="container">
-    <h1>Gestión de Consorcios</h1>
+    <h1>Edificio Duhau 90</h1>
 
     <!-- Selector de Consorcio -->
     <div class="row" style="margin-top:10px;">
@@ -23,17 +23,15 @@
   <main class="container">
 
     <!-- Tabs -->
-    <nav class="tabs">
-      <button class="tab active" data-tab="gastos">Gastos</button>
-      <button class="tab" data-tab="pagos">Pagos</button>
-      <button class="tab" data-tab="unidades">Unidades</button>
-      <button class="tab" data-tab="consorcios">Consorcios</button>
-      <button class="tab" data-tab="resumen">Resumen</button>
-
-    </nav>
+<nav class="tabs">
+  <button class="tab active" data-tab="unidades">Unidades</button>
+  <button class="tab" data-tab="gastos">Gastos</button>
+  <button class="tab" data-tab="pagos">Pagos</button>
+  <button class="tab" data-tab="resumen">Resumen</button>
+</nav>
 
     <!-- GASTOS -->
-    <section class="panel active" id="panel-gastos">
+    <section class="panel" id="panel-gastos">
       <div class="card">
         <div class="row">
           <h2>Gastos</h2>
@@ -64,7 +62,7 @@
     </section>
 
     <!-- UNIDADES -->
-    <section class="panel" id="panel-unidades">
+    <section class="panel active" id="panel-unidades">
       <div class="card">
         <div class="row">
           <h2>Unidades</h2>
@@ -74,21 +72,6 @@
         </div>
         <div class="tableWrap">
           <table id="grid-unidades" class="grid"></table>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONSORCIOS -->
-    <section class="panel" id="panel-consorcios">
-      <div class="card">
-        <div class="row">
-          <h2>Consorcios</h2>
-          <div class="spacer"></div>
-          <button class="btn" onclick="addRow('consorcios')">+ Fila</button>
-          <button class="btn" onclick="saveFromGrid('consorcios')">Guardar</button>
-        </div>
-        <div class="tableWrap">
-          <table id="grid-consorcios" class="grid"></table>
         </div>
       </div>
     </section>
@@ -138,5 +121,13 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.31/dist/jspdf.plugin.autotable.min.js"></script>
   <script src="app.js"></script>
+
+  <div id="loaderOverlay" class="loaderOverlay hidden">
+  <div class="loaderBox">
+    <div class="spinner"></div>
+    <div class="loaderText">Cargando datos...</div>
+  </div>
+</div>
+
 </body>
 </html>

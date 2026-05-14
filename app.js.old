@@ -8,7 +8,6 @@ let selectedPeriodo = null;
 
 
 let lastResumen = null;
-let _unidadesCache = null;
 
 const CONSORCIO_STORAGE_KEY = "selectedConsorcio";
 let selectedConsorcio = null;
@@ -456,7 +455,6 @@ async function initConsorcioSelector() {
     }
 
     selectedConsorcio = select.value || null;
-    _unidadesCache = null;
 
     localStorage.setItem(
       CONSORCIO_STORAGE_KEY,
@@ -505,11 +503,8 @@ function escapeHtml(s) {
 
 // ---------- Inicio ----------
 (async function start() {
-  // Si tenés tab "Consorcios", lo podés cargar también cuando se haga click.
-  await initConsorcioSelector();
-  initPeriodoSelector();   
-  // Carga inicial: gastos filtrado
-  await loadAndRenderFiltered("unidades");
+  initPeriodoSelector();          // ← primero setear el periodo
+  await initConsorcioSelector();  // ← recién ahí cargar los datos (ya con el periodo correcto)
 })();
 
 function sumImporte(headers, rows) {
@@ -913,7 +908,6 @@ async function preguntarIA() {
 }
 
 async function getUnidadesMap() {
-  if (_unidadesCache) return _unidadesCache;
   const values = await apiLoadBySheetName("Unidades");
 
   const headers = values[0] || [];
@@ -938,8 +932,7 @@ async function getUnidadesMap() {
     });
   });
 
-  _unidadesCache = map;
-  return _unidadesCache;
+  return map;
 }
 
 
@@ -949,23 +942,8 @@ async function attachUFPopup(td, tr, headers) {
 
     // ya abierto
     if (td.querySelector("select")) return;
-    // ya cargando
-    if (td.dataset.loading === "1") return;
 
-    td.dataset.loading = "1";
-    const oldText = td.textContent;
-    td.textContent = "⏳";
-
-    let unidades;
-    try {
-      unidades = await getUnidadesMap();
-    } catch (e) {
-      td.textContent = oldText;
-      td.dataset.loading = "0";
-      console.error("Error cargando unidades:", e);
-      return;
-    }
-    td.dataset.loading = "0";
+    const unidades = await getUnidadesMap();
 
     const current = td.dataset.value || "";
 
@@ -981,6 +959,9 @@ async function attachUFPopup(td, tr, headers) {
         </option>
       `).join("")}
     `;
+
+    // guardar contenido actual
+    const oldText = td.textContent;
 
     td.innerHTML = "";
     td.appendChild(select);

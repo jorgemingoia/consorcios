@@ -4,30 +4,31 @@
    ========================= */
 
 :root{
-  /* Base palette (keeps your dark theme) */
-  --bg:#0b1220;
-  --card:#0f1a2d;
-  --card2:#0c1628;
-  --text:#e9eefc;
-  --muted:#a8b3cf;
+  --bg:#f4f7fb;
 
-  --border:rgba(255,255,255,.10);
-  --border2:rgba(255,255,255,.14);
+  --card:#ffffff;
+  --card2:#f8fafc;
 
-  --accent:#6ea8fe;
-  --accent2:#8bbcff;
+  --text:#1e293b;
+  --muted:#64748b;
 
-  --danger:#ff6e6e;
-  --success:#2dd4bf;
-  --warning:#fbbf24;
+  --border:rgba(15,23,42,.08);
+  --border2:rgba(15,23,42,.12);
 
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --shadowSoft: 0 6px 18px rgba(0,0,0,.25);
+  --accent:#2563eb;
+  --accent2:#3b82f6;
+
+  --danger:#ef4444;
+  --success:#14b8a6;
+  --warning:#f59e0b;
+
+  --shadow: 0 10px 30px rgba(15,23,42,.08);
+  --shadowSoft: 0 6px 18px rgba(15,23,42,.06);
 
   --radius:16px;
   --radiusSm:12px;
 
-  --focus: 0 0 0 3px rgba(110,168,254,.25);
+  --focus: 0 0 0 3px rgba(37,99,235,.18);
 }
 
 /* Reset-ish */
@@ -37,8 +38,8 @@ body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
   background:
-    radial-gradient(1200px 600px at 20% 0%, rgba(110,168,254,.10), transparent 60%),
-    radial-gradient(900px 500px at 90% 10%, rgba(45,212,191,.08), transparent 60%),
+    radial-gradient(1200px 600px at 20% 0%, rgba(37,99,235,.06), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(20,184,166,.05), transparent 60%),
     var(--bg);
   color:var(--text);
   line-height:1.45;
@@ -265,7 +266,7 @@ label{ user-select:none; }
 .grid tr:last-child td{ border-bottom:0; }
 
 .grid tbody tr:nth-child(odd) td{
-  background: rgba(255,255,255,.02);
+  background: rgba(15,23,42,.02);
 }
 .grid tbody tr:hover td{
   background: rgba(110,168,254,.06);
@@ -318,4 +319,116 @@ label{ user-select:none; }
   .tab{ padding:9px 12px; }
   .btn{ padding:9px 12px; }
   .grid{ min-width: 780px; }
+}
+
+/* ===== LIGHT THEME FIXES ===== */
+
+body{
+  color:#1e293b;
+}
+
+/* tabs */
+.tab{
+  color:#475569;
+}
+
+.tab.active{
+  color:#1e293b;
+}
+
+/* headers tablas */
+.grid th{
+  color:#334155 !important;
+  background:#f8fafc;
+}
+
+/* celdas */
+.grid td{
+  color:#1e293b;
+}
+
+/* placeholders */
+.input::placeholder{
+  color:#64748b;
+}
+
+/* textos secundarios */
+.muted{
+  color:#64748b !important;
+}
+
+/* cards */
+.card{
+  background:#ffffff;
+}
+
+/* tabla */
+.tableWrap{
+  background:#ffffff;
+}
+
+/* filas alternadas */
+.grid tbody tr:nth-child(odd) td{
+  background:#fafafa;
+}
+
+/* hover */
+.grid tbody tr:hover td{
+  background:#eff6ff;
+}
+
+.grid td[contenteditable="false"]{
+  user-select:none;
+}
+
+/* ===== Loader Overlay ===== */
+
+.loaderOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:opacity .2s ease;
+}
+
+.loaderOverlay.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+
+.loaderBox{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  padding:28px 34px;
+  border-radius:20px;
+  background:#ffffff;
+  box-shadow:0 10px 30px rgba(15,23,42,.12);
+  border:1px solid rgba(15,23,42,.08);
+}
+
+.loaderText{
+  color:#334155;
+  font-size:14px;
+  font-weight:500;
+}
+
+.spinner{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  border:5px solid #dbeafe;
+  border-top-color:#2563eb;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
 }
